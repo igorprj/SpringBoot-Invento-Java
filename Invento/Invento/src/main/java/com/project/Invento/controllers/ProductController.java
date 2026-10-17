@@ -3,6 +3,7 @@ package com.project.Invento.controllers;
 import com.project.Invento.dtos.ProductRequestDTO;
 import com.project.Invento.dtos.ProductResponseDTO;
 import com.project.Invento.services.ProductService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<ProductResponseDTO> createProduct(@RequestBody ProductRequestDTO productRequestDTO) {
+    public ResponseEntity<ProductResponseDTO> createProduct(@Valid @RequestBody ProductRequestDTO productRequestDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.createProduct(productRequestDTO));
     }
 
@@ -28,7 +29,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductResponseDTO> getProductById(@RequestParam Long id) {
+    public ResponseEntity<ProductResponseDTO> getProductById(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.getProductById(id));
     }
 
@@ -39,7 +40,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductResponseDTO> updateProductById(@RequestBody ProductRequestDTO productRequestDTO,  @RequestParam Long id) {
+    public ResponseEntity<ProductResponseDTO> updateProductById(@Valid @PathVariable Long id, @RequestBody ProductRequestDTO productRequestDTO) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.updateProduct(id, productRequestDTO));
     }
 
