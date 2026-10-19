@@ -2,6 +2,7 @@ package com.project.Invento.services;
 
 import com.project.Invento.dtos.ProductRequestDTO;
 import com.project.Invento.dtos.ProductResponseDTO;
+import com.project.Invento.exceptions.ProductNotFoundException;
 import com.project.Invento.models.Product;
 import com.project.Invento.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +40,7 @@ public class ProductService {
 
     public ProductResponseDTO getProductById(Long id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
 
         ProductResponseDTO dto = toDTO(product);
 
@@ -48,14 +49,14 @@ public class ProductService {
 
     public void deleteProductById(Long id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
 
         productRepository.delete(product);
     }
 
     public ProductResponseDTO updateProduct(Long id, ProductRequestDTO productRequestDTO) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
 
 
         updatedEntity(product, productRequestDTO);
