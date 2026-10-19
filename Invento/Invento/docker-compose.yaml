@@ -1,0 +1,14 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: invento-postgres
+    environment:
+      POSTGRES_DB: invento
+      POSTGRES_USER: invento
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - invento_postgres_data:/var/lib/postgresql/data
+volumes:
+  invento_postgres_data:
