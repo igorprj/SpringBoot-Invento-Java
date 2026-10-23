@@ -67,6 +67,29 @@ public class ProductService {
         return dto;
     }
 
+    public ProductResponseDTO getProductsByName(String name) {
+        Product product = productRepository.findByName(name)
+                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
+
+
+        return toDTO(product);
+    }
+
+    public ProductResponseDTO getProductsBySku(String sku) {
+        Product product = productRepository.findBySku(sku)
+                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
+
+
+        return toDTO(product);
+    }
+
+    public List<ProductResponseDTO> getProductsByQuantity(int quantity) {
+        return productRepository.findAllByQuantity(quantity)
+                .stream()
+                .map(this::toDTO)
+                .toList();
+    }
+
     private void updatedEntity(Product product, ProductRequestDTO productRequestDTO) {
         product.setName(productRequestDTO.name());
         product.setSku(productRequestDTO.sku());
