@@ -44,4 +44,19 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(productService.updateProduct(id, productRequestDTO));
     }
 
+    @GetMapping("/{name}")
+    public ResponseEntity<ProductResponseDTO> getProductByName(@PathVariable String name) {
+        return ResponseEntity.status(HttpStatus.OK).body(productService.getProductsByName(name));
+    }
+
+    @GetMapping("/{sku}")
+    public ResponseEntity<ProductResponseDTO> getProductBySku(@PathVariable String sku) {
+        return ResponseEntity.status(HttpStatus.OK).body(productService.getProductsBySku(sku));
+    }
+
+    @GetMapping("/{quantity")
+    public ResponseEntity<List<ProductResponseDTO>> getProductByQuantity(@PathVariable int quantity) {
+        return ResponseEntity.status(HttpStatus.OK).body(productService.getProductsByQuantity(quantity));
+    }
+
 }
