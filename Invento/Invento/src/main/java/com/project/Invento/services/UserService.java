@@ -2,6 +2,7 @@ package com.project.Invento.services;
 
 import com.project.Invento.dtos.UserRequestDTO;
 import com.project.Invento.dtos.UserResponseDTO;
+import com.project.Invento.exceptions.UserNotFoundException;
 import com.project.Invento.models.User;
 import com.project.Invento.repositories.UserRepository;
 import lombok.AllArgsConstructor;
@@ -38,21 +39,21 @@ public class UserService {
 
     public UserResponseDTO getById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found!"));
+                .orElseThrow(() -> new UserNotFoundException("User not found!"));
 
         return toDTO(user);
     }
 
     public void deleteUser(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found!"));
+                .orElseThrow(() -> new UserNotFoundException("User not found!"));
 
         userRepository.delete(user);
     }
 
     public UserResponseDTO updateUser(Long id, UserRequestDTO userRequestDTO) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found!"));
+                .orElseThrow(() -> new UserNotFoundException("User not found!"));
 
         updatedEntity(user,  userRequestDTO);
         User saved = userRepository.save(user);
