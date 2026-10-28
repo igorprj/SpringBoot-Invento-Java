@@ -19,7 +19,7 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    public UserResponseDTO createUser(UserRequestDTO userRequestDTO) {
+    public UserResponseDTO register(UserRequestDTO userRequestDTO) {
         User user = new User();
 
         updatedEntity(user,  userRequestDTO);
