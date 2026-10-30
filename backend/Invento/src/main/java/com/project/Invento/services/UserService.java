@@ -2,6 +2,7 @@ package com.project.Invento.services;
 
 import com.project.Invento.dtos.UserRequestDTO;
 import com.project.Invento.dtos.UserResponseDTO;
+import com.project.Invento.enums.Role;
 import com.project.Invento.exceptions.UserNotFoundException;
 import com.project.Invento.models.User;
 import com.project.Invento.repositories.UserRepository;
@@ -22,7 +23,8 @@ public class UserService {
     public UserResponseDTO register(UserRequestDTO userRequestDTO) {
         User user = new User();
 
-        updatedEntity(user,  userRequestDTO);
+        updatedEntity(user, userRequestDTO);
+        user.setRole(Role.USER);
 
         User saved = userRepository.save(user);
 
@@ -55,7 +57,7 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found!"));
 
-        updatedEntity(user,  userRequestDTO);
+        updatedEntity(user, userRequestDTO);
         User saved = userRepository.save(user);
 
         return toDTO(saved);
