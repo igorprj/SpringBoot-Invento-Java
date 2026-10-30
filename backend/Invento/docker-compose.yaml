@@ -19,8 +19,10 @@ services:
     ports:
       - "8080:8080"
     environment:
-      POSTGRES_URL: jdbc:postgresql://postgres:5432/Invento
+      POSTGRES_URL: jdbc:postgresql://postgres:5432/invento
       POSTGRES_USER: invento
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_TOKEN: ${JWT_TOKEN}
+      JWT_EXPIRATION: ${JWT_EXPIRATION}
 volumes:
   invento_postgres_data:

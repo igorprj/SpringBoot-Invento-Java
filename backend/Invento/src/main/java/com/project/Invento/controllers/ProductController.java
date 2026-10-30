@@ -54,7 +54,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(productService.getProductsBySku(sku));
     }
 
-    @GetMapping("/{quantity")
+    @GetMapping("/{quantity}")
     public ResponseEntity<List<ProductResponseDTO>> getProductByQuantity(@PathVariable int quantity) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.getProductsByQuantity(quantity));
     }

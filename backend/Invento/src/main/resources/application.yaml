@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/Invento
+    url: ${POSTGRES_URL:jdbc:postgresql://localhost:5432/invento}
     driver-class-name: org.postgresql.Driver
-    username: invento
+    username: ${POSTGRES_USER:Invento}
     password: ${DB_PASSWORD}
 
   jpa:

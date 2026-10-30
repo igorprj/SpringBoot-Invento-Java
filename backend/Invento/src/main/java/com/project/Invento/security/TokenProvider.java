@@ -16,7 +16,7 @@ public class TokenProvider {
 
     @Value("${jwt.expiration}")
     private Long tokenExpiration;
-    @Value("${jwt.secret}")
+    @Value("${jwt.token}")
     private String tokenSecret;
 
     public String gerarToken(Authentication authentication) {
