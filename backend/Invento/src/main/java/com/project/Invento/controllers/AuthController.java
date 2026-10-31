@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.token.TokenService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,9 +24,9 @@ public class AuthController {
 
     private final TokenProvider tokenProvider;
 
-    @GetMapping
+    @PostMapping("/register")
     public ResponseEntity<UserResponseDTO> register(@Valid @RequestBody UserRequestDTO userRequestDTO) {
-        return ResponseEntity.ok(userService.register(userRequestDTO));
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.register(userRequestDTO));
     }
 
     @PostMapping("/login")
