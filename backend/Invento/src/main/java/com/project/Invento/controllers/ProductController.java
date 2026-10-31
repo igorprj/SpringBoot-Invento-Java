@@ -40,21 +40,21 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductResponseDTO> updateProductById(@Valid @PathVariable Long id, @RequestBody ProductRequestDTO productRequestDTO) {
+    public ResponseEntity<ProductResponseDTO> updateProductById(@PathVariable Long id, @Valid @RequestBody ProductRequestDTO productRequestDTO) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.updateProduct(id, productRequestDTO));
     }
 
-    @GetMapping("/{name}")
+    @GetMapping("/name/{name}")
     public ResponseEntity<ProductResponseDTO> getProductByName(@PathVariable String name) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.getProductsByName(name));
     }
 
-    @GetMapping("/{sku}")
+    @GetMapping("/sku/{sku}")
     public ResponseEntity<ProductResponseDTO> getProductBySku(@PathVariable String sku) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.getProductsBySku(sku));
     }
 
-    @GetMapping("/{quantity}")
+    @GetMapping("/quantity/{quantity}")
     public ResponseEntity<List<ProductResponseDTO>> getProductByQuantity(@PathVariable int quantity) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.getProductsByQuantity(quantity));
     }
