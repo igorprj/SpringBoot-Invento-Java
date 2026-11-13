@@ -8,6 +8,7 @@ import com.project.Invento.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,6 +89,49 @@ public class ProductService {
                 .stream()
                 .map(this::toDTO)
                 .toList();
+    }
+
+    public byte[] exportCSV() {
+        List<Product> product = productRepository.findAll();
+
+        StringBuilder csv = new StringBuilder();
+
+        for (Product p : product) {
+            csv.append(p.getId());
+            csv.append(";");
+            csv.append(escapeCSV(p.getName()));
+            csv.append(";");
+            csv.append(escapeCSV(p.getSku()));
+            csv.append(";");
+            csv.append(p.getDescription());
+            csv.append(";");
+            csv.append(p.getCostPrice());
+            csv.append(";");
+            csv.append(p.getSalePrice());
+            csv.append(";");
+            csv.append(p.getQuantity());
+            csv.append(";");
+            csv.append(p.getMinimumStock());
+            csv.append(";");
+            csv.append(p.getMaximumStock());
+        }
+
+        return csv.toString().getBytes(StandardCharsets.UTF_8);
+    }
+
+    private String escapeCSV(String value) {
+        if (value == null) {
+            return "";
+        }
+
+        if (value.contains(";") || value.contains("\"")
+                || value.contains("\n") || value.contains("\r")) {
+
+            value = value.replace("\"", "\"\"");
+            return "\"" + value + "\"";
+        }
+
+        return value;
     }
 
     private void updatedEntity(Product product, ProductRequestDTO productRequestDTO) {

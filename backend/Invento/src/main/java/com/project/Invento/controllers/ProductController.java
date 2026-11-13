@@ -5,7 +5,9 @@ import com.project.Invento.dtos.ProductResponseDTO;
 import com.project.Invento.services.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,6 +59,14 @@ public class ProductController {
     @GetMapping("/quantity/{quantity}")
     public ResponseEntity<List<ProductResponseDTO>> getProductByQuantity(@PathVariable int quantity) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.getProductsByQuantity(quantity));
+    }
+
+    @GetMapping("/export/csv")
+    public ResponseEntity<byte[]> exportCsv() {
+        byte[] file = productService.exportCSV();
+        return ResponseEntity.status(HttpStatus.OK)
+                .header(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=products.csv")
+                .contentType(MediaType.parseMediaType("text/csv")).body(file);
     }
 
 }
