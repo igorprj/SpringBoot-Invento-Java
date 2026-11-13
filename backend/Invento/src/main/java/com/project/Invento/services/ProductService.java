@@ -7,10 +7,15 @@ import com.project.Invento.models.Product;
 import com.project.Invento.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -97,8 +102,6 @@ public class ProductService {
         StringBuilder csv = new StringBuilder();
 
         for (Product p : product) {
-            csv.append(p.getId());
-            csv.append(";");
             csv.append(escapeCSV(p.getName()));
             csv.append(";");
             csv.append(escapeCSV(p.getSku()));
@@ -117,6 +120,65 @@ public class ProductService {
         }
 
         return csv.toString().getBytes(StandardCharsets.UTF_8);
+    }
+
+    public void importCSV(MultipartFile file) {
+        try {
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8)
+            );
+
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split(";");
+
+                for(String column : data){
+                    System.out.println(column);
+                }
+
+                String name = data[0];
+                String sku = data[1];
+
+                BigDecimal costPrice = new BigDecimal(data[2]);
+                BigDecimal salePrice = new BigDecimal(data[3]);
+
+                Integer quantity = Integer.parseInt(data[4]);
+                Integer minimumStock = Integer.parseInt(data[5]);
+                Integer maximumStock = Integer.parseInt(data[6]);
+
+                Product product = new Product();
+
+                product.setName(name);
+                product.setSku(sku);
+                product.setCostPrice(costPrice);
+                product.setSalePrice(salePrice);
+                product.setQuantity(quantity);
+                product.setMinimumStock(minimumStock);
+                product.setMaximumStock(maximumStock);
+
+                Optional<Product> optional = productRepository.findBySku(product.getSku());
+
+                if (optional.isPresent()) {
+                    Product existingProduct = optional.get();
+                    existingProduct.setQuantity(product.getQuantity());
+                    existingProduct.setMinimumStock(product.getMinimumStock());
+                    existingProduct.setMaximumStock(product.getMaximumStock());
+                    existingProduct.setSalePrice(product.getSalePrice());
+                    existingProduct.setName(product.getName());
+                    existingProduct.setCostPrice(product.getCostPrice());
+
+                    productRepository.save(existingProduct);
+                } else {
+                    productRepository.save(product);
+                }
+            }
+
+
+
+        } catch (IOException ex) {
+            throw new RuntimeException("Erro ao ler o arquivo CSV", ex);
+        }
     }
 
     private String escapeCSV(String value) {

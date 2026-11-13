@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -69,4 +70,14 @@ public class ProductController {
                 .contentType(MediaType.parseMediaType("text/csv")).body(file);
     }
 
+    @PostMapping("/import/csv")
+    public ResponseEntity<String> importCsv(@RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("File is empty");
+        }
+
+        productService.importCSV(file);
+
+        return ResponseEntity.status(HttpStatus.OK).body("Legal");
+    }
 }
