@@ -4,7 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "npm run services:up && vite",
+    "services:up": "docker compose -f ../backend/Invento/docker-compose.yaml up -d",
+    "services:stop": "docker compose -f ../backend/Invento/docker-compose.yaml stop",
+    "services:down": "docker compose -f ../backend/Invento/docker-compose.yaml down",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
