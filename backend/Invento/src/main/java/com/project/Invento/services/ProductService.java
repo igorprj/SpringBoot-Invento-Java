@@ -6,6 +6,7 @@ import com.project.Invento.exceptions.ProductNotFoundException;
 import com.project.Invento.models.Product;
 import com.project.Invento.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -228,6 +229,74 @@ public class ProductService {
             workbook.write(outputStream);
             return outputStream.toByteArray();
         }
+    }
+
+    public void importExcel(MultipartFile file) {
+        try {
+            Workbook workbook = new XSSFWorkbook(file.getInputStream());
+
+            Sheet sheet = workbook.getSheetAt(0);
+
+            for (int i = 1; i < sheet.getLastRowNum(); i++) {
+
+                Row row = sheet.getRow(i);
+
+                if (row == null) {
+                    continue;
+                }
+
+
+                String name = row.getCell(0).getStringCellValue();
+                String sku = row.getCell(1).getStringCellValue();
+
+                BigDecimal costPrice = BigDecimal.valueOf(
+                        row.getCell(3).getNumericCellValue()
+                );
+
+                BigDecimal salePrice = BigDecimal.valueOf(
+                        row.getCell(4).getNumericCellValue()
+                );
+
+                Integer quantity = (int) row.getCell(5).getNumericCellValue();
+                Integer minimumStock = (int) row.getCell(6).getNumericCellValue();
+                Integer maximumStock = (int) row.getCell(7).getNumericCellValue();
+
+                Product product = new Product();
+
+                product.setName(name);
+                product.setSku(sku);
+                product.setDescription(row.getCell(2).getStringCellValue());
+                product.setCostPrice(costPrice);
+                product.setSalePrice(salePrice);
+                product.setQuantity(quantity);
+                product.setMinimumStock(minimumStock);
+                product.setMaximumStock(maximumStock);
+
+                Optional<Product> optional = productRepository.findBySku(product.getSku());
+
+                if (optional.isPresent()) {
+                    Product existingProduct = getProduct(optional, product);
+
+                    productRepository.save(existingProduct);
+                } else {
+                    productRepository.save(product);
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Erro ao ler o arquivo Excel", e);
+        }
+    }
+
+    private static @NonNull Product getProduct(Optional<Product> optional, Product product) {
+        Product existingProduct = optional.get();
+        existingProduct.setName(product.getName());
+        existingProduct.setDescription(product.getDescription());
+        existingProduct.setCostPrice(product.getCostPrice());
+        existingProduct.setSalePrice(product.getSalePrice());
+        existingProduct.setQuantity(product.getQuantity());
+        existingProduct.setMinimumStock(product.getMinimumStock());
+        existingProduct.setMaximumStock(product.getMaximumStock());
+        return existingProduct;
     }
 
     private String escapeCSV(String value) {

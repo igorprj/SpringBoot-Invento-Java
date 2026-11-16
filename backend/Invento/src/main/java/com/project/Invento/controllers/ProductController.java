@@ -92,4 +92,16 @@ public class ProductController {
 
         return ResponseEntity.status(HttpStatus.OK).headers(headers).body(file);
     }
+
+    @PostMapping("/import/xlsx")
+    public ResponseEntity<String> importXlsx(@RequestParam("file") MultipartFile file){
+
+        if(file.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        productService.importExcel(file);
+
+        return ResponseEntity.ok("Importação Excel realizada com sucesso!");
+    }
 }
