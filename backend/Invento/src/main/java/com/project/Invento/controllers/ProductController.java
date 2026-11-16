@@ -5,13 +5,11 @@ import com.project.Invento.dtos.ProductResponseDTO;
 import com.project.Invento.services.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -79,5 +77,19 @@ public class ProductController {
         productService.importCSV(file);
 
         return ResponseEntity.status(HttpStatus.OK).body("Legal");
+    }
+
+    @GetMapping("/export/xlsx")
+    public ResponseEntity<byte[]> exportXlsx() throws IOException {
+        byte[] file = productService.exportExcel();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("application/vnp.openxmlformats-officedocument.spreadsheetml.sheet"));
+
+        headers.setContentDisposition(
+                ContentDisposition.attachment().filename("produtos.xlsx").build()
+        );
+
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(file);
     }
 }

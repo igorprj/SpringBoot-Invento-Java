@@ -8,8 +8,14 @@ import com.project.Invento.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Cell;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
@@ -178,6 +184,49 @@ public class ProductService {
 
         } catch (IOException ex) {
             throw new RuntimeException("Erro ao ler o arquivo CSV", ex);
+        }
+    }
+
+    public byte[] exportExcel() throws IOException {
+        try(Workbook workbook = new XSSFWorkbook();
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+
+            Sheet sheet = workbook.createSheet("Produtos");
+
+            Row header = sheet.createRow(0);
+
+            String[] columns = {
+                    "Nome",
+                    "SKU",
+                    "Preço de custo",
+                    "Preço de venda",
+                    "Quantidade",
+                    "Estoque mínimo",
+                    "Estoque máximo"
+            };
+
+            for (int i = 0; i < columns.length; i++) {
+                Cell cell = header.createCell(i);
+                cell.setCellValue(columns[i]);
+            }
+
+            List<Product> product = productRepository.findAll();
+
+            for (int i = 0; i < product.size(); i++) {
+                Row row = sheet.createRow(i + 1);
+
+                row.createCell(0).setCellValue(product.get(i).getName());
+                row.createCell(1).setCellValue(product.get(i).getSku());
+                row.createCell(2).setCellValue(product.get(i).getDescription());
+                row.createCell(3).setCellValue(product.get(i).getCostPrice().doubleValue());
+                row.createCell(4).setCellValue(product.get(i).getSalePrice().doubleValue());
+                row.createCell(5).setCellValue(product.get(i).getQuantity());
+                row.createCell(6).setCellValue(product.get(i).getMinimumStock());
+                row.createCell(7).setCellValue(product.get(i).getMaximumStock());
+            }
+
+            workbook.write(outputStream);
+            return outputStream.toByteArray();
         }
     }
 
